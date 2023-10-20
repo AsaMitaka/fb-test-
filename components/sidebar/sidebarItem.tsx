@@ -1,3 +1,4 @@
+import useLoginModal from '@/hooks/useLoginModal';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { IconType } from 'react-icons';
@@ -12,6 +13,7 @@ interface SidebarItemProps {
 
 const SidebarItem: React.FC<SidebarItemProps> = ({ auth, icon: Icon, href, label, onClick }) => {
   const router = useRouter();
+  const loginModal = useLoginModal();
 
   const goToHref = useCallback(() => {
     if (onClick) {
@@ -19,16 +21,18 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ auth, icon: Icon, href, label
     }
 
     if (auth) {
-      return;
+      return loginModal.onOpen();
     } else if (href) {
       router.push(href);
     }
-  }, [auth, href, router, onClick]);
+  }, [auth, href, loginModal, onClick, router]);
 
   return (
-    <div onClick={goToHref}>
+    <div
+      className="w-full flex flex-row gap-3 px-2 py-3 text-black rounded-md cursor-pointer hover:bg-neutral-200"
+      onClick={goToHref}>
       <Icon size={24} />
-      {label}
+      <p className="hidden lg:block">{label}</p>
     </div>
   );
 };
