@@ -6,11 +6,14 @@ import Input from '../ui/input';
 import Modal from './modal';
 
 const RegistrationModal = () => {
+  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const loginModal = useLoginModal();
-  const registerModal = useRegistrationModal();
+
+  const useLogin = useLoginModal();
+  const useRegistration = useRegistrationModal();
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -25,13 +28,29 @@ const RegistrationModal = () => {
     }
   }, []);
 
-  const handleToggle = useCallback(() => {
-    loginModal.onOpen();
-    registerModal.onClose();
-  }, [loginModal, registerModal]);
+  const onHandleToggle = useCallback(() => {
+    if (isLoading) return;
+
+    useRegistration.onClose();
+    useLogin.onOpen();
+  }, [isLoading, useLogin, useRegistration]);
 
   const bodyContent = (
-    <>
+    <div className="flex flex-col gap-2">
+      <Input
+        onChange={(e) => setUsername(e.target.value)}
+        disabled={isLoading}
+        placeholder="Username"
+        type="text"
+        value={username}
+      />
+      <Input
+        onChange={(e) => setName(e.target.value)}
+        disabled={isLoading}
+        placeholder="Name"
+        type="text"
+        value={name}
+      />
       <Input
         onChange={(e) => setEmail(e.target.value)}
         disabled={isLoading}
@@ -46,16 +65,16 @@ const RegistrationModal = () => {
         type="password"
         value={password}
       />
-    </>
+    </div>
   );
 
   const footerContent = (
-    <div>
+    <div className="mt-2">
       <p className="text-black text-xl">
         You have an account?
         <span
-          className="text-black text-xl hover:underline hover:text-sky-500 cursor-pointer"
-          onClick={handleToggle}>
+          className="ml-2 text-black text-xl hover:underline hover:text-sky-500 cursor-pointer"
+          onClick={onHandleToggle}>
           Login!
         </span>
       </p>
@@ -68,9 +87,9 @@ const RegistrationModal = () => {
       body={bodyContent}
       footer={footerContent}
       disabled={isLoading}
-      isOpen={loginModal.isOpen}
+      isOpen={useRegistration.isOpen}
       label="Create Account"
-      onClose={loginModal.onClose}
+      onClose={useRegistration.onClose}
       onSubmit={handleSubmit}
     />
   );
