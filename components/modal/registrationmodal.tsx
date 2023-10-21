@@ -4,10 +4,11 @@ import useLoginModal from '@/hooks/useLoginModal';
 import useRegistrationModal from '@/hooks/useRegistrationModal';
 import Input from '../ui/input';
 import Modal from './modal';
+import axios from 'axios';
 
 const RegistrationModal = () => {
   const [username, setUsername] = useState('');
-  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +19,14 @@ const RegistrationModal = () => {
   const handleSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
+      await axios.post('/api/registration', {
+        nickname,
+        username,
+        email,
+        password,
+      });
 
-      toast.success('Success');
+      toast.success('Signup success');
     } catch (error) {
       console.warn(error);
       toast.error('Something went wrong');
@@ -45,11 +52,11 @@ const RegistrationModal = () => {
         value={username}
       />
       <Input
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => setNickname(e.target.value)}
         disabled={isLoading}
         placeholder="Name"
         type="text"
-        value={name}
+        value={nickname}
       />
       <Input
         onChange={(e) => setEmail(e.target.value)}
