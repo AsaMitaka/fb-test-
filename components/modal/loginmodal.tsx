@@ -4,6 +4,7 @@ import useLoginModal from '@/hooks/useLoginModal';
 import useRegistrationModal from '@/hooks/useRegistrationModal';
 import Input from '../ui/input';
 import Modal from './modal';
+import { signIn } from 'next-auth/react';
 
 const LoginModal = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,12 @@ const LoginModal = () => {
     try {
       setIsLoading(true);
 
-      toast.success('Success');
+      toast.success('Logged in');
+      signIn('credentials', {
+        email,
+        password,
+      });
+      useLogin.onClose();
     } catch (error) {
       console.warn(error);
       toast.error('Something went wrong');
