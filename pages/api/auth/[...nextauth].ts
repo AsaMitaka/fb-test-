@@ -1,10 +1,12 @@
-import { AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
 import prismadb from '@/libs/prisma';
+import bcrypt from 'bcrypt';
+import { AuthOptions } from 'next-auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
 export const authOptions: AuthOptions = {
+  adapter: PrismaAdapter(prismadb),
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -28,6 +30,7 @@ export const authOptions: AuthOptions = {
         }
 
         const isCorrectPassword = await bcrypt.compare(credentials.password, user.password);
+
         if (!isCorrectPassword) {
           throw new Error('Invalid credentials');
         }
