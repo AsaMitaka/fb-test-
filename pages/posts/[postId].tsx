@@ -1,3 +1,5 @@
+import CommentFeed from '@/components/comment/commentfeed';
+import Form from '@/components/form/form';
 import PostItem from '@/components/post/postitem';
 import Header from '@/components/ui/header';
 import usePost from '@/hooks/usePost';
@@ -9,10 +11,11 @@ const Post = () => {
   const { postId } = router.query;
 
   const { data: fetchedPost, isLoading } = usePost(postId as string);
+  console.log(fetchedPost);
 
   if (!fetchedPost || isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full text-black">
         <ClipLoader color="blue" size={80} />
       </div>
     );
@@ -20,9 +23,10 @@ const Post = () => {
 
   return (
     <>
-      <Header label={`Post ${postId}`} showBackArrow />
-      <h1 className="text-black text-xl">Post: {postId}</h1>
+      <Header label="Post" showBackArrow />
       <PostItem data={fetchedPost} userId={fetchedPost?.user?.id} />
+      <Form placeholder="comment" postId={postId as string} isComment />
+      <CommentFeed comments={fetchedPost.comments} />
     </>
   );
 };
