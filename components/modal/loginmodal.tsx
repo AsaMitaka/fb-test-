@@ -30,7 +30,7 @@ const LoginModal = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [email, password, setIsLoading, useLogin]);
 
   const onHandleToggle = useCallback(() => {
     if (isLoading) return;
