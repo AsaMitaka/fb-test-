@@ -6,12 +6,14 @@ import '@/styles/globals.css';
 import LoginModal from '@/components/modal/loginmodal';
 import RegistrationModal from '@/components/modal/registrationmodal';
 import Layout from '@/components/ui/layout';
+import EditUserModal from '@/components/modal/editmodal';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
       <LoginModal />
       <RegistrationModal />
+      <EditUserModal />
       <Toaster />
       <Layout>
         <Component {...pageProps} />
