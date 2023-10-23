@@ -1,3 +1,4 @@
+import useCurrent from '@/hooks/useCurrent';
 import useLoginModal from '@/hooks/useLoginModal';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
@@ -15,17 +16,19 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ auth, icon: Icon, href, label
   const router = useRouter();
   const loginModal = useLoginModal();
 
+  const { data: fetchCurrentUser } = useCurrent();
+
   const goToHref = useCallback(() => {
     if (onClick) {
       return onClick();
     }
 
-    if (auth) {
+    if (auth && !fetchCurrentUser) {
       return loginModal.onOpen();
     } else if (href) {
       router.push(href);
     }
-  }, [auth, href, loginModal, onClick, router]);
+  }, [auth, fetchCurrentUser, href, loginModal, onClick, router]);
 
   return (
     <div

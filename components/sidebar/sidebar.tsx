@@ -1,3 +1,4 @@
+import useCurrent from '@/hooks/useCurrent';
 import SidebarItem from './sidebarItem';
 import { signOut } from 'next-auth/react';
 import { AiOutlineUser } from 'react-icons/ai';
@@ -5,6 +6,8 @@ import { BiNews, BiLogOut } from 'react-icons/bi';
 import { FaUserFriends } from 'react-icons/fa';
 
 const Sidebar = () => {
+  const { data: fetchCurrentUser } = useCurrent();
+
   const items = [
     {
       href: '/',
@@ -19,7 +22,7 @@ const Sidebar = () => {
     },
     {
       auth: true,
-      href: '/users',
+      href: `/user/${fetchCurrentUser?.id}`,
       label: 'Account',
       icon: AiOutlineUser,
     },
@@ -31,15 +34,19 @@ const Sidebar = () => {
         <div className="space-y-3 w-full">
           {items.map((item, index) => (
             <SidebarItem
-              key={`${item.label}__${index}`}
               auth={item.auth}
-              label={item.label}
               href={item.href}
               icon={item.icon}
+              key={`${item.label}__${index}`}
+              label={item.label}
             />
           ))}
-          <hr className="h-px bg-neutral-500 border-0 dark:bg-gray-700" />
-          <SidebarItem icon={BiLogOut} label="LogOut" onClick={signOut} />
+          {fetchCurrentUser && (
+            <>
+              <hr className="h-px bg-neutral-500 border-0 dark:bg-gray-700" />
+              <SidebarItem icon={BiLogOut} label="LogOut" onClick={signOut} />
+            </>
+          )}
         </div>
       </div>
     </div>
