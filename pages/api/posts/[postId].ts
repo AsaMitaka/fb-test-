@@ -1,25 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismadb from '@/libs/prisma';
-import serverAuth from '@/libs/serverAuth';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (
-    req.method !== 'GET' &&
-    req.method !== 'DELETE' &&
-    req.method !== 'PATCH' &&
-    req.method !== 'POST'
-  ) {
+  if (req.method !== 'GET' && req.method !== 'DELETE' && req.method !== 'PATCH') {
     return res.status(405).end();
   }
 
   try {
-    const { currentUser } = await serverAuth(req, res);
     const { postId } = req.query;
+
+    let post;
 
     if (!postId || typeof postId !== 'string') {
       throw new Error('Invalid postId');
     }
 
-    let post;
     if (req.method === 'GET') {
       post = await prismadb.post.findUnique({
         where: {
@@ -39,19 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    if (req.method === 'POST') {
-      const { body } = req.body;
-
-      post = await prismadb.post.create({
-        data: {
-          body,
-          userId: currentUser.id,
-        },
-      });
-    }
-
     if (req.method === 'DELETE') {
-      const comments = await prismadb.comments.delete({
+      const comments = await prismadb.comment.delete({
         where: {
           id: postId,
         },
