@@ -14,15 +14,20 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data = {} }) => {
     router.push(`/user/${data.user.id}`);
   }, [router, data.user.id]);
 
-  const handlePost = useCallback(() => {
-    router.push(`/post/${data.id}`);
-  }, [data.id, router]);
+  const handlePost = useCallback(
+    (e: any) => {
+      e.stopPropagation();
+
+      router.push(`/posts/${data.id}`);
+    },
+    [data.id, router],
+  );
 
   return (
     <div
       onClick={handlePost}
-      className="border-[1px] border-neutral-800 flex flex-col gap-1 cursor-pointer">
-      <div className="flex flex-row items-center gap-3 px-2 py-3 border-b-[1px]">
+      className="border-b-[1px] border-neutral-800 flex flex-col gap-1 cursor-pointer">
+      <div className="flex flex-row items-center gap-3 px-2 py-3">
         <Avatar userId={data.user.id} />
         <div className="flex flex-col ">
           <p className="text-black hover:underline" onClick={handleUser}>
@@ -31,9 +36,9 @@ const PostItem: React.FC<PostItemProps> = ({ userId, data = {} }) => {
           <p className="text-neutral-800 hover:underline" onClick={handleUser}>
             {data.user.username}
           </p>
+          <div className="text-black text-xl px-4 py-2">{data.body}</div>
         </div>
       </div>
-      <div className="text-black text-xl">{data.body}</div>
     </div>
   );
 };
