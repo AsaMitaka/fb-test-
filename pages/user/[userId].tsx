@@ -1,5 +1,6 @@
 import PostFeed from '@/components/post/postfeed';
 import Header from '@/components/ui/header';
+import UserBio from '@/components/user/userbio';
 import useUser from '@/hooks/useUser';
 import { useRouter } from 'next/router';
 import { ClipLoader } from 'react-spinners';
@@ -8,11 +9,12 @@ const User = () => {
   const router = useRouter();
   const { userId } = router.query;
 
-  const { data: fetchedUser, isLoading } = useUser(userId as string);
+  const { data: fetchedCurrentUser, isLoading } = useUser(userId as string);
+  console.log(userId, fetchedCurrentUser);
 
-  if (isLoading || !fetchedUser) {
+  if (isLoading || !fetchedCurrentUser) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         <ClipLoader color="blue" size={80} />
       </div>
     );
@@ -20,8 +22,8 @@ const User = () => {
 
   return (
     <>
-      <Header label={`User: ${userId}`} showBackArrow />
-      <h1 className="text-black text-xl">User: {userId}</h1>
+      <Header label={`${fetchedCurrentUser?.username}`} showBackArrow />
+      <UserBio userId={userId as string} />
       <PostFeed userId={userId as string} />
     </>
   );
