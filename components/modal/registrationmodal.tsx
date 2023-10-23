@@ -5,6 +5,7 @@ import useRegistrationModal from '@/hooks/useRegistrationModal';
 import Input from '../ui/input';
 import Modal from './modal';
 import axios from 'axios';
+import { signIn } from 'next-auth/react';
 
 const RegistrationModal = () => {
   const [username, setUsername] = useState('');
@@ -18,22 +19,25 @@ const RegistrationModal = () => {
 
   const handleSubmit = useCallback(async () => {
     try {
-      setIsLoading(true);
       await axios.post('/api/registration', {
         nickname,
         username,
         email,
         password,
       });
+      setIsLoading(true);
 
       toast.success('Signup success');
+      signIn('credentials', { email, password });
+
+      useRegistration.onClose();
     } catch (error) {
       console.warn(error);
       toast.error('Something went wrong');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [email, nickname, password, useRegistration, username]);
 
   const onHandleToggle = useCallback(() => {
     if (isLoading) return;
