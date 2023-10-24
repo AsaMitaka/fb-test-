@@ -29,6 +29,7 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
         <div className="flex flex-col justify-end">
           <p className="text-black text-2xl">{fetchedCurrentUser?.username}</p>
           <p className="text-neutral-600 text-sm">@{fetchedCurrentUser?.nickname}</p>
+          <p className="text-black text-sm">{fetchedCurrentUser?.bio}</p>
           <div className="mt-1 flex flex-row items-center gap-5">
             <div className="flex items-center gap-1">
               <p className="text-black cursor-pointer hover:underline">
