@@ -4,12 +4,12 @@ import prismadb from '@/libs/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST' && req.method !== 'DELETE') {
-    return res.status(405).end();
+    return res.status(400).end();
   }
 
   try {
-    const { currentUser } = await serverAuth(req, res);
     const { userId } = req.body;
+    const { currentUser } = await serverAuth(req, res);
 
     if (!userId || typeof userId !== 'string') {
       throw new Error('Invalid userId');
@@ -25,28 +25,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error('User not found');
     }
 
-    let followingsUserId = [...(user.followingIds || [])];
+    let updatedFollowingIds = [...(user.followingIds || [])];
 
     if (req.method === 'POST') {
-      followingsUserId.push(currentUser.id);
+      updatedFollowingIds.push(userId);
     }
 
     if (req.method === 'DELETE') {
-      followingsUserId = followingsUserId.filter((followingId) => followingId !== currentUser.id);
+      updatedFollowingIds = updatedFollowingIds.filter((followingId) => followingId !== userId);
     }
 
     const updatedUser = await prismadb.user.update({
       where: {
-        id: userId,
+        id: currentUser.id,
       },
       data: {
-        followingIds: followingsUserId,
+        followingIds: updatedFollowingIds,
       },
     });
 
     return res.status(200).json(updatedUser);
   } catch (error) {
     console.warn(error);
-    return res.status(400).end();
+    return res.status(405).end();
   }
 }
