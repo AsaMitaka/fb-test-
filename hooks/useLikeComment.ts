@@ -3,22 +3,30 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import useCurrent from './useCurrent';
-import usePost from './usePost';
-import usePosts from './usePosts';
 import useLoginModal from './useLoginModal';
+import useComment from './useComment';
+import usePost from './usePost';
 
-const useLikeComment = ({ postId, userId }: { postId: string; userId?: string }) => {
+const useLikeComment = ({
+  commentId,
+  postId,
+  userId,
+}: {
+  commentId: string;
+  postId: string;
+  userId?: string;
+}) => {
   const { data: currentUser } = useCurrent();
-  const { data: fetchPost, mutate: mutateFetchPost } = usePost(postId);
-  const { mutate: mutateFetchPosts } = usePosts(userId);
+  const { data: fetchComment, mutate: mutateFetchComment } = useComment(commentId);
+  const { mutate: mutateFetchPost } = usePost(postId);
 
   const loginModal = useLoginModal();
 
   const hasLike = useMemo(() => {
-    const like = fetchPost?.likesId || [];
+    const like = fetchComment?.likesId || [];
 
     return like.includes(currentUser?.id);
-  }, [currentUser?.id, fetchPost?.likesId]);
+  }, [currentUser?.id, fetchComment?.likesId]);
 
   const toggleLike = useCallback(async () => {
     if (!currentUser) {
@@ -29,21 +37,21 @@ const useLikeComment = ({ postId, userId }: { postId: string; userId?: string })
       let request;
 
       if (hasLike) {
-        request = () => axios.delete('/api/likeComment/', { data: { postId } });
+        request = () => axios.delete('/api/likeComment/', { data: { commentId } });
       } else {
-        request = () => axios.post('/api/likeComment', { postId });
+        request = () => axios.post('/api/likeComment', { commentId });
       }
 
       await request();
+      mutateFetchComment();
       mutateFetchPost();
-      mutateFetchPosts();
 
       toast.success('Success');
     } catch (error) {
       console.warn(error);
       toast.error('Something went wrong');
     }
-  }, [currentUser, hasLike, loginModal, mutateFetchPost, mutateFetchPosts, postId]);
+  }, [commentId, currentUser, hasLike, loginModal, mutateFetchComment, mutateFetchPost]);
 
   return { hasLike, toggleLike };
 };
