@@ -26,7 +26,11 @@ const Post = () => {
       <Header label="Post" showBackArrow />
       <PostItem data={fetchedPost} userId={fetchedPost?.user?.id} />
       <Form placeholder="comment" postId={postId as string} isComment />
-      <CommentFeed comments={fetchedPost.comments} />
+      <CommentFeed
+        comments={fetchedPost.comments}
+        postId={fetchedPost.id}
+        userId={fetchedPost?.user?.id}
+      />
     </>
   );
 };
