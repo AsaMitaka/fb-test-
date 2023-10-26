@@ -34,19 +34,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === 'DELETE') {
-      const comments = await prismadb.comment.delete({
+      post = await prismadb.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+      if (!post) {
+        return res.status(404).json({ message: 'Post not exist' });
+      }
+
+      const comments = await prismadb.comment.findMany({
         where: {
           id: postId,
         },
       });
 
-      post = await prismadb.post.delete({
+      if (comments.length > 0) {
+        await prismadb.comment.delete({
+          where: {
+            id: postId,
+          },
+        });
+      }
+
+      await prismadb.post.delete({
         where: {
           id: postId,
         },
       });
 
-      return res.status(200).json({ ...comments, ...post });
+      return res.status(200).json({ message: 'Deleted' });
     }
 
     if (req.method === 'PATCH') {
