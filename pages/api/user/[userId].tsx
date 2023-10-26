@@ -8,6 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { userId } = req.query;
+
     if (!userId || typeof userId !== 'string') {
       throw new Error('Invalid userId');
     }
@@ -18,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    const followingCount = await prismadb.user.count({
+    const followersCount = await prismadb.user.count({
       where: {
         followingIds: {
           has: userId,
@@ -26,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    return res.status(200).json({ followingCount, ...user });
+    return res.status(200).json({ followersCount, ...user });
   } catch (error) {
     console.warn(error);
     return res.status(400).end();
