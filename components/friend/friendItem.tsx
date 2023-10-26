@@ -9,8 +9,9 @@ interface FriendItemProps {
 }
 
 const FriendItem: React.FC<FriendItemProps> = ({ userId }) => {
-  const { data: fetchCurrentUser, isLoading } = useUser(userId);
   const router = useRouter();
+  const { data: fetchCurrentUser, isLoading } = useUser(userId);
+
   const goToUser = useCallback(() => {
     router.push(`/user/${fetchCurrentUser?.id}`);
   }, [fetchCurrentUser?.id, router]);
@@ -24,13 +25,17 @@ const FriendItem: React.FC<FriendItemProps> = ({ userId }) => {
   }
 
   return (
-    <div className="flex flex-row items-center" onClick={goToUser}>
-      <Avatar hasBorder userId={userId} />
-      <div className="flex flex-col">
-        <p className="text-black text-xl cursor-pointer hover:underline">
-          {fetchCurrentUser?.nickname}
-        </p>
-        <p className="text-neutral-800 text-sm cursor-pointer">@{fetchCurrentUser?.username}</p>
+    <div className=" group">
+      <div
+        className="w-full px-2 py-3 flex flex-row items-center gap-3 border-b-[1px] border-neutral-500 cursor-pointer group-hover:bg-neutral-200"
+        onClick={goToUser}>
+        <Avatar hasBorder userId={userId} />
+        <div className="flex flex-col">
+          <p className="text-black text-xl cursor-pointer group-hover:underline">
+            {fetchCurrentUser?.nickname}
+          </p>
+          <p className="text-neutral-800 text-sm cursor-pointer">@{fetchCurrentUser?.username}</p>
+        </div>
       </div>
     </div>
   );

@@ -2,9 +2,18 @@ import { ClipLoader } from 'react-spinners';
 import Header from '@/components/ui/header';
 import useCurrent from '@/hooks/useCurrent';
 import FriendItem from '@/components/friend/friendItem';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Friends = () => {
-  const { data: fetchCurrentUser, isLoading } = useCurrent();
+  const router = useRouter();
+  const { data: currentUser, isLoading } = useCurrent();
+
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('/');
+    }
+  }, [currentUser, router]);
 
   if (isLoading) {
     return (
@@ -17,10 +26,10 @@ const Friends = () => {
   return (
     <>
       <Header label="Friend" showBackArrow />
-      <div className="flex flex-col gap-1">
-        <h1 className="text-black text-xl">Friends List</h1>
-        {fetchCurrentUser?.followingIds.length > 0 ? (
-          fetchCurrentUser?.followingIds.map((followId: string) => (
+      <div className="flex flex-col">
+        <h1 className="text-black text-xl border-b-[1px] border-neutral-500">Friends List</h1>
+        {currentUser?.followingIds.length > 0 ? (
+          currentUser?.followingIds.map((followId: string) => (
             <FriendItem userId={followId} key={followId} />
           ))
         ) : (
